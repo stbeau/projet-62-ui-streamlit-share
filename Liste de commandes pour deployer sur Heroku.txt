@@ -1,0 +1,22 @@
+
+#  The library pipreqs can autogenerate requirement
+pip install pipreqs
+
+#Then once it’s downloaded, just step out of the folder, run the following command, and in the folder, you should find your requirements.txt file.
+pipreqs <directory path>
+
+# The setup.sh file contains some commands to set the problem on the Heroku side, so create a setup.sh file 
+mkdir -p ~/.streamlit/
+echo "\
+[general]\n\
+email = \"your@domain.com\"\n\
+" > ~/.streamlit/credentials.toml
+echo "\
+[server]\n\
+headless = true\n\
+enableCORS=false\n\
+port = $PORT\n\
+
+
+# make a file called Procfile
+web: sh setup.sh && streamlit run [name-of-app].py

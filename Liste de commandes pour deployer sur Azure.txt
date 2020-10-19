@@ -1,0 +1,28 @@
+RUN mkdir ~/.streamlit
+RUN cp config.toml ~/.streamlit/config.toml
+RUN cp credentials.toml ~/.streamlit/credentials.toml
+# DOKERFILE : Dockerfile
+FROM python:3.7-slim
+COPY . /app
+WORKDIR /app
+RUN pip install -r requirements.txt
+sudo apt-get install libgomp1 # Ajouté après première tentative parceque error d'exécution
+EXPOSE 80
+RUN mkdir ~/.streamlit
+RUN cp config.toml ~/.streamlit/config.toml
+RUN cp credentials.toml ~/.streamlit/credentials.toml
+WORKDIR /app
+ENTRYPOINT ["streamlit", "run"]
+CMD ["census_app.py"]
+
+
+az login
+az group create -l eastus -n CensusApp
+az acr create --name CensusAppRegistry --resource-group CensusApp --sku basic --admin-enabled true
+az acr build --registry CensusAppRegistry --resource-group CensusApp --image census-app .
+az appservice plan create -g CensusApp -n CensusAppServicePlan -l eastus --is-linux --sku B1
+az webapp create -g CensusApp -p CensusAppServicePlan -n census-web-app -i censusappregistry.azurecr.io/census-app:latest
+
+And to redeploy :
+
+az acr build --registry CensusAppRegistry --resource-group CensusApp --image census-app .
