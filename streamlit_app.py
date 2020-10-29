@@ -75,7 +75,8 @@ if choix_menu == menu[0]:
                      "surface_terrain":surface_terrain, "type_local":type_local}
 
         input_df = pd.DataFrame([input_dic])
-        output = predict(model=model,input_df=input_df)
+        #output = predict(model=model,input_df=input_df)
+        output = model.predict(input_df)
         output = np.expm1(output[0])
         output = f"{output:.0f}$"
 
