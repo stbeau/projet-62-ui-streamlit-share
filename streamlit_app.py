@@ -5,25 +5,28 @@ Created on Mon Sep 28 23:19:56 2020
 @author: sbeau
 """
 
-
 from pycaret.regression import load_model, predict_model
 #from collections import OrderedDict
 #from IPython.display import HTML
 from PIL import Image
 import streamlit as st
 import pandas as pd
-#import numpy as np
+import numpy as np
 import pickle
+from joblib import load
 #import os
 
 st.beta_set_page_config(page_title="Valeur foncière", page_icon=None, layout='centered', initial_sidebar_state='auto')
 
 #st.write(os.getcwd())
 
-MODEL_FILENAME = "final_xg_reg_for_streamlit_test"
+# MODEL_FILENAME = "final_xg_reg_for_streamlit_test"
+# UI_DATA_FILENAME = "ui_data.pkl"
+MODEL_FILENAME = "model.joblib"
 UI_DATA_FILENAME = "ui_data.pkl"
 
-model  = load_model(MODEL_FILENAME)
+#model  = load_model(MODEL_FILENAME)
+model = load(MODEL_FILENAME)
 
 with open(UI_DATA_FILENAME, "rb") as handle:
     ui_data = pickle.load(handle)
@@ -46,23 +49,31 @@ choix_menu = st.sidebar.selectbox("",menu)
 
 if choix_menu == menu[0]:
     st.sidebar.subheader("Options")
-    code_postal=st.sidebar.selectbox("Code postale",ui_data["code_postal"])
-    code_commune= st.sidebar.selectbox("Code commune",ui_data["code_commune"])
+    type_local=st.sidebar.selectbox("Type de propriétés",["Maison","Appartement","Dépendance","Local industriel. commercial ou assimilé"])
+    #code_postal=st.sidebar.selectbox("Code postale",ui_data["code_postal"])
+    #code_commune= st.sidebar.selectbox("Code commune",ui_data["code_commune"])
+    #nombre_pieces_principales=st.sidebar.selectbox("Nombre de pieces principales",[0,1,2,3,4,5,6,7,8,9,10])
+    nombre_pieces_principales=st.sidebar.slider("Nombre de pieces principales",min_value=1,max_value=10,value=1,step=1,format="%d")    
     surface_reelle_bati=st.sidebar.number_input("Surface réelle bati (en m^2)",value=0.0,format='%f',step=1.0)
     surface_terrain=st.sidebar.number_input("Surface du terrain (en m^2)",value=0.0,format='%f')
-    #nombre_pieces_principales=st.sidebar.selectbox("Nombre de pieces principales",[0,1,2,3,4,5,6,7,8,9,10])
-    nombre_pieces_principales=st.sidebar.slider("Nombre de pieces principales",min_value=1,max_value=10,value=1,step=1,format="%d")
+    latitude = st.sidebar.number_input("Latitude",value=0.0,format='%f')
+    longitude = st.sidebar.number_input("Longitude",value=0.0,format='%f')
     
     submit = st.sidebar.button('Prédire')
 
-    input_dic = {"code_postal":"", "surface_reelle_bati":"",
-                 "surface_terrain":"", "nombre_pieces_principales":""}
+    input_dic = {"latitude":"", "longitude":"",
+                 "nombre_pieces_principales":"",
+                 "surface_reelle_bati":"",
+                 "surface_terrain":"", "type_local":""}
     input_df = pd.DataFrame([input_dic])
     
     output = 0.0
     if submit:
-        input_dic = {"code_postal":code_postal, "surface_reelle_bati":surface_reelle_bati,
-                     "surface_terrain":surface_terrain, "nombre_pieces_principales":nombre_pieces_principales}
+        input_dic = {"latitude":latitude, "longitude":longitude,
+                     "nombre_pieces_principales":nombre_pieces_principales,
+                     "surface_reelle_bati":surface_reelle_bati,
+                     "surface_terrain":surface_terrain, "type_local":type_local}
+
         input_df = pd.DataFrame([input_dic])
         output = predict(model=model,input_df=input_df)
         output = f"{output:.0f}$"
@@ -81,7 +92,8 @@ if choix_menu == menu[0]:
     
     st.checkbox("Montrer des comparables")
     
-    
+  colnames = ["latitude":latitude, "longitude":longitude, "nombre_pieces_principales","surface_reelle_bati","surface_terrain","type_local"]
+
 
 # GarageArea=st.sidebar.number_input("Enter area of Garage (in Sqft)",value=0.0,format='%f',step=1.0)
 # GarageCars=st.sidebar.number_input("Number of Cars to be accomodated in garage",min_value=1.0,max_value=10.0,step=1.0,format='%f')
