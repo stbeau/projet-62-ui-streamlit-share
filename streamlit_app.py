@@ -76,6 +76,7 @@ if choix_menu == menu[0]:
 
         input_df = pd.DataFrame([input_dic])
         output = predict(model=model,input_df=input_df)
+        output = np.expm1(output[0])
         output = f"{output:.0f}$"
 
 #--------------------------- PAGE 1 -----------------------------
@@ -92,7 +93,7 @@ if choix_menu == menu[0]:
     
     st.checkbox("Montrer des comparables")
     
-  colnames = ["latitude":latitude, "longitude":longitude, "nombre_pieces_principales","surface_reelle_bati","surface_terrain","type_local"]
+#  colnames = ["latitude":latitude, "longitude":longitude, "nombre_pieces_principales","surface_reelle_bati","surface_terrain","type_local"]
 
 
 # GarageArea=st.sidebar.number_input("Enter area of Garage (in Sqft)",value=0.0,format='%f',step=1.0)
