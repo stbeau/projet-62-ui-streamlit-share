@@ -54,20 +54,21 @@ if choix_menu == menu[0]:
     #code_commune= st.sidebar.selectbox("Code commune",ui_data["code_commune"])
     #nombre_pieces_principales=st.sidebar.selectbox("Nombre de pieces principales",[0,1,2,3,4,5,6,7,8,9,10])
     nombre_pieces_principales=st.sidebar.slider("Nombre de pieces principales",min_value=1,max_value=10,value=1,step=1,format="%d")    
-    surface_reelle_bati=st.sidebar.number_input("Surface réelle bati (en m^2)",value=0.0,format='%f',step=1.0)
+    surface_reelle_bati=st.sidebar.number_input("Surface réelle bati (en m^2)",value=0.0,format='%f')
     surface_terrain=st.sidebar.number_input("Surface du terrain (en m^2)",value=0.0,format='%f')
     latitude = st.sidebar.number_input("Latitude",value=0.0,format='%f')
     longitude = st.sidebar.number_input("Longitude",value=0.0,format='%f')
     
     submit = st.sidebar.button('Prédire')
 
-    input_dic = {"latitude":"", "longitude":"",
-                 "nombre_pieces_principales":"",
-                 "surface_reelle_bati":"",
-                 "surface_terrain":"", "type_local":""}
-    input_df = pd.DataFrame([input_dic])
+    # input_dic = {"latitude":"", "longitude":"",
+    #              "nombre_pieces_principales":"",
+    #              "surface_reelle_bati":"",
+    #              "surface_terrain":"", "type_local":""}
+    # input_df = pd.DataFrame([input_dic])
     
-    output = 0.0
+    # output = 0.0
+    
     if submit:
         input_dic = {"latitude":latitude, "longitude":longitude,
                      "nombre_pieces_principales":nombre_pieces_principales,
@@ -93,6 +94,7 @@ if choix_menu == menu[0]:
     st.success(f"**Valeur foncière estimée :** {output}")
     
     st.checkbox("Montrer des comparables")
+    st.map({"latitude":latitude, "longitude":longitude})
     
 #  colnames = ["latitude":latitude, "longitude":longitude, "nombre_pieces_principales","surface_reelle_bati","surface_terrain","type_local"]
 
