@@ -74,7 +74,9 @@ if choix_menu == menu[0]:
 
     
     if submit:
+        print(1)
         if deja_soumis is None:
+            print(2)
             deja_soumis=True
 
         input_dic = {"latitude":latitude, "longitude":longitude,
@@ -95,11 +97,14 @@ if choix_menu == menu[0]:
     st.subheader("")
     
     if deja_soumis:
+        print(3)
         st.write("## **Résidence**")
         st.table(input_df.assign(hack="").set_index("hack"))
         st.success(f"**Valeur foncière estimée :** {output}")
     
         want_map = st.checkbox("Montrer l'emplacement")
+        print(want_map)
         if want_map:
+            print(4)
             st.map({"latitude":latitude, "longitude":longitude})
     
