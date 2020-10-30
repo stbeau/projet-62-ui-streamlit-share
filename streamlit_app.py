@@ -37,6 +37,13 @@ def predict(model, input_df):
     output = np.expm1(output[0])
     return output
 
+#----------------------- inutile -----------------------------------
+# Juste pour éviter des erreurs
+input_dic = {"code_postal":"", "surface_reelle_bati":"",
+             "surface_terrain":"", "nombre_pieces_principales":""}
+input_df = pd.DataFrame([input_dic])
+#-------------------------------------------------------------------
+
 
 # ------------------------ SIDEBAR ------------------------------
 
@@ -80,11 +87,12 @@ if choix_menu == menu[0]:
     #st.subheader('Créé par : Equipe #4\n\n')
     st.subheader("")
     
-    st.write("## **Résidence**")
-    st.table(input_df.assign(hack="").set_index("hack"))
-    st.success(f"**Valeur foncière estimée :** {output}")
+    if submit:
+        st.write("## **Résidence**")
+        st.table(input_df.assign(hack="").set_index("hack"))
+        st.success(f"**Valeur foncière estimée :** {output}")
     
-    want_map = st.checkbox("Montrer l'emplacement")
-    if want_map:
-        st.map({"latitude":latitude, "longitude":longitude})
+        want_map = st.checkbox("Montrer l'emplacement")
+        if want_map:
+            st.map({"latitude":latitude, "longitude":longitude})
     
