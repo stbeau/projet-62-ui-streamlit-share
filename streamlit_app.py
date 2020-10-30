@@ -6,8 +6,6 @@ Created on Mon Sep 28 23:19:56 2020
 """
 
 from pycaret.regression import load_model, predict_model
-#from collections import OrderedDict
-#from IPython.display import HTML
 from PIL import Image
 import streamlit as st
 import pandas as pd
@@ -33,9 +31,11 @@ with open(UI_DATA_FILENAME, "rb") as handle:
 
 
 def predict(model, input_df):
-    predictions_df = predict_model(estimator=model, data=input_df)
-    predictions = predictions_df['Label'][0]
-    return predictions
+    # predictions_df = predict_model(estimator=model, data=input_df)
+    # predictions = predictions_df['Label'][0]
+    output = model.predict(input_df)
+    output = np.expm1(output[0])
+    return output
 
 
 # ------------------------ SIDEBAR ------------------------------
@@ -61,13 +61,6 @@ if choix_menu == menu[0]:
     
     submit = st.sidebar.button('Prédire')
 
-    # input_dic = {"latitude":"", "longitude":"",
-    #              "nombre_pieces_principales":"",
-    #              "surface_reelle_bati":"",
-    #              "surface_terrain":"", "type_local":""}
-    # input_df = pd.DataFrame([input_dic])
-    
-    # output = 0.0
     
     if submit:
         input_dic = {"latitude":latitude, "longitude":longitude,
@@ -76,9 +69,7 @@ if choix_menu == menu[0]:
                      "surface_terrain":surface_terrain, "type_local":type_local}
 
         input_df = pd.DataFrame([input_dic])
-        #output = predict(model=model,input_df=input_df)
-        output = model.predict(input_df)
-        output = np.expm1(output[0])
+        output = predict(model=model,input_df=input_df)
         output = f"{output:.0f}$"
 
 #--------------------------- PAGE 1 -----------------------------
@@ -93,23 +84,7 @@ if choix_menu == menu[0]:
     st.table(input_df.assign(hack="").set_index("hack"))
     st.success(f"**Valeur foncière estimée :** {output}")
     
-    st.checkbox("Montrer des comparables")
-    st.map({"latitude":latitude, "longitude":longitude})
+    want_map = st.checkbox("Montrer l'emplacement")
+    if want_map:
+        st.map({"latitude":latitude, "longitude":longitude})
     
-#  colnames = ["latitude":latitude, "longitude":longitude, "nombre_pieces_principales","surface_reelle_bati","surface_terrain","type_local"]
-
-
-# GarageArea=st.sidebar.number_input("Enter area of Garage (in Sqft)",value=0.0,format='%f',step=1.0)
-# GarageCars=st.sidebar.number_input("Number of Cars to be accomodated in garage",min_value=1.0,max_value=10.0,step=1.0,format='%f')
-# TotRmsAbvGrd=st.sidebar.number_input("Enter number of Rooms",min_value=1,max_value=10,format='%d')
-# years=tuple([i for i in range(1872,2011)])
-# YearBuilt=st.sidebar.selectbox("Select the overall quality(10 being 'Very Excellent' and 1 being 'very poor')",years)
-# remyears=tuple([i for i in range(1950,2011)])
-# YearRemodAdd=st.sidebar.selectbox("Select Remodel date (same as construction date if no remodeling or additions)",remyears)
-# garyears=tuple([i for i in range(1872,2011)])
-# garyears=tuple(map(float,garyears))
-# GarageYrBlt=st.sidebar.selectbox("Select year in which Garage was built)",garyears)
-# MasVnrArea=st.sidebar.number_input("Masonry veneer area (in Sqft)",value=0.0,format='%f',step=1.0)
-# Fireplaces=st.sidebar.number_input("Select number of FirePlaces",min_value=1,max_value=10,format='%d')
-# BsmtFinSF1=st.sidebar.number_input("Enter Basement Finished Area(in Sqft)",value=0,format='%d')
-# submit = st.sidebar.button('Predict')
