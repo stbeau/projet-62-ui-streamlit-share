@@ -23,6 +23,10 @@ st.beta_set_page_config(page_title="Valeur foncière", page_icon=None, layout='c
 MODEL_FILENAME = "model.joblib"
 UI_DATA_FILENAME = "ui_data.pkl"
 
+try: deja_soumis
+except NameError: deja_soumis = None
+
+
 #model  = load_model(MODEL_FILENAME)
 model = load(MODEL_FILENAME)
 
@@ -70,6 +74,9 @@ if choix_menu == menu[0]:
 
     
     if submit:
+        if deja_soumis is None:
+            deja_soumis=True
+
         input_dic = {"latitude":latitude, "longitude":longitude,
                      "nombre_pieces_principales":nombre_pieces_principales,
                      "surface_reelle_bati":surface_reelle_bati,
@@ -87,7 +94,7 @@ if choix_menu == menu[0]:
     #st.subheader('Créé par : Equipe #4\n\n')
     st.subheader("")
     
-    if submit:
+    if deja_soumis:
         st.write("## **Résidence**")
         st.table(input_df.assign(hack="").set_index("hack"))
         st.success(f"**Valeur foncière estimée :** {output}")
